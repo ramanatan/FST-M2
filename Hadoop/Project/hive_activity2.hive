@@ -1,0 +1,15 @@
+-- Drop table created for episodIV_disalogues if exists
+DROP TABLE episode4;
+
+-- Create table episode4 with 2 columns name and line, separated by tab, so that it can load the episodes file. Also enable to skip the first 2 rows from the input file.
+CREATE TABLE episode4(name STRING, line STRING)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' TBLPROPERTIES("skip.header.line.count"="2");
+
+-- Load data into the episode4 table
+LOAD DATA LOCAL INPATH '/root/Hive/episodeIV_dialogues.txt' INTO TABLE episode4;
+
+-- Generate out with count of lines with at least 1 mention of the name LUKE.
+INSERT OVERWRITE LOCAL DIRECTORY '/root/Hive/output2' ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
+SELECT COUNT(*) as no_of_lines_with_Luke FROM episode4 WHERE INSTR(line, 'Luke')>0;
+
+
